@@ -1,0 +1,14 @@
+HELP.md
+.gradle
+gradle/
+build/
+gradlew*
+
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
