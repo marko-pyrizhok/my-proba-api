@@ -1,9 +1,7 @@
 HELP.md
 .gradle
-gradle/
 build/
 gradlew*
-
 
 ### IntelliJ IDEA ###
 .idea
@@ -11,4 +9,3 @@ gradlew*
 *.iml
 *.ipr
 out/
-
