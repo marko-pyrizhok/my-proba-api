@@ -3,17 +3,16 @@ package org.plast.proba.service;
 import org.plast.proba.domain.ProbaFactory;
 import org.plast.proba.domain.model.ConfirmPointRequest;
 import org.plast.proba.domain.model.PointState;
-import org.plast.proba.domain.pojo.Point;
-import org.plast.proba.domain.pojo.ProbaToPoint;
+import org.plast.proba.domain.pojo.Tochka;
+import org.plast.proba.domain.pojo.ProbaToTochka;
 import org.plast.proba.domain.pojo.User;
 import org.plast.proba.domain.pojo.UserProba;
-import org.plast.proba.repository.PointRepository;
+import org.plast.proba.repository.TochkaRepository;
 import org.plast.proba.repository.ProbaRepository;
-import org.plast.proba.repository.ProbaToPointRepository;
+import org.plast.proba.repository.ProbaToTochkaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,10 +23,10 @@ public class ProbaServiceImpl implements ProbaService {
     private ProbaRepository probaRepository;
 
     @Autowired
-    private PointRepository pointRepository;
+    private TochkaRepository tochkaRepository;
 
     @Autowired
-    private ProbaToPointRepository probaToPointRepository;
+    private ProbaToTochkaRepository probaToTochkaRepository;
 
     @Override
     public List<UserProba> probaListByUserId(long id) {
@@ -42,11 +41,11 @@ public class ProbaServiceImpl implements ProbaService {
     @Override
     public List<PointState> probaWithPointsById(long id) {
         UserProba userProba = probaRepository.getOne(id);
-        List<ProbaToPoint> proba = probaToPointRepository.findByUserProba(userProba);
+        List<ProbaToTochka> proba = probaToTochkaRepository.findByUserProba(userProba);
 
-        List<Point> pointList = pointRepository.findByRank(userProba.getRank());
-        List<PointState> pointStateList = pointList.stream()
-                .map(point -> ProbaFactory.createProbaState(proba, point))
+        List<Tochka> tochkaList = tochkaRepository.findByRank(userProba.getRank());
+        List<PointState> pointStateList = tochkaList.stream()
+                .map(tochka -> ProbaFactory.createProbaState(proba, tochka))
                 .collect(Collectors.toList());
         return pointStateList;
     }
@@ -54,13 +53,14 @@ public class ProbaServiceImpl implements ProbaService {
     @Override
     public void confirmPoint(ConfirmPointRequest confirm, User loggedInUser) {
         UserProba userProba = probaRepository.getOne(confirm.getProbaId());
-        List<ProbaToPoint> proba = probaToPointRepository.findByUserProba(userProba);
-        ProbaToPoint newConfirmPoint = new ProbaToPoint();
-        newConfirmPoint.setPoint(pointRepository.getOne(confirm.getPointId()));
+        List<ProbaToTochka> proba = probaToTochkaRepository.findByUserProba(userProba);
+        ProbaToTochka newConfirmPoint = new ProbaToTochka();
+        Tochka tochka = tochkaRepository.getOne((int)confirm.getPointId());
+        newConfirmPoint.setTochka(tochka);
         newConfirmPoint.setUserProba(userProba);
         newConfirmPoint.setConfirmUser(loggedInUser);
         newConfirmPoint.setConfirmDate(confirm.getConfirmDate());
-        probaToPointRepository.save(newConfirmPoint);
+        probaToTochkaRepository.save(newConfirmPoint);
     }
 
 }

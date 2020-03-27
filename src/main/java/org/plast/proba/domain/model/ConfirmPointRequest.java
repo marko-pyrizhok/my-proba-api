@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class ConfirmPointRequest implements Serializable {
     private long probaId;
-    private int pointId;
+    private long pointId;
     private LocalDate confirmDate;
 
     public ConfirmPointRequest() {
@@ -19,11 +19,11 @@ public class ConfirmPointRequest implements Serializable {
         this.probaId = probaId;
     }
 
-    public int getPointId() {
+    public long getPointId() {
         return pointId;
     }
 
-    public void setPointId(int pointId) {
+    public void setPointId(long pointId) {
         this.pointId = pointId;
     }
 

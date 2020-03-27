@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "proba_to_point")
-public class ProbaToPoint {
+@Table(name = "proba_to_tochka")
+public class ProbaToTochka {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,8 +15,8 @@ public class ProbaToPoint {
     private UserProba userProba;
 
     @ManyToOne
-    @JoinColumn(name = "point_id")
-    private Point point;
+    @JoinColumn(name = "tochka_id")
+    private Tochka tochka;
 
     @ManyToOne
     @JoinColumn(name = "confirm_user_id")
@@ -41,12 +41,12 @@ public class ProbaToPoint {
         this.userProba = userProba;
     }
 
-    public Point getPoint() {
-        return point;
+    public Tochka getTochka() {
+        return tochka;
     }
 
-    public void setPoint(Point point) {
-        this.point = point;
+    public void setTochka(Tochka tochka) {
+        this.tochka = tochka;
     }
 
     public User getConfirmUser() {

@@ -3,8 +3,8 @@ package org.plast.proba.domain.pojo;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "point")
-public class Point {
+@Table(name = "tochka")
+public class Tochka {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -12,8 +12,6 @@ public class Point {
     private String code;
 
     private String name;
-
-    private String description;
 
     private Integer rank;
 
@@ -39,14 +37,6 @@ public class Point {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Integer getRank() {
