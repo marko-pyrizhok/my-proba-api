@@ -16,6 +16,10 @@ public class User {
 
     private String ulad;
 
+    @ManyToOne
+    @JoinColumn(name = "gurtok_id")
+    private Gurtok gurtok;
+
     @ManyToMany
     private Set<Role> roles;
 
