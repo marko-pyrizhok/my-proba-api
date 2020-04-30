@@ -1,5 +1,6 @@
 package org.plast.proba.service;
 
+import org.plast.proba.domain.pojo.Gurtok;
 import org.plast.proba.domain.pojo.User;
 import org.plast.proba.repository.RoleRepository;
 import org.plast.proba.repository.UserRepository;
@@ -8,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,6 +32,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByEmail(username);
+    }
+
+    @Override
+    public List<User> findByGurtok(Long gurtokId) {
+        Gurtok gurtok = new Gurtok();
+        gurtok.setId(gurtokId);
+        return userRepository.findByGurtok(gurtok);
     }
 
     @Override

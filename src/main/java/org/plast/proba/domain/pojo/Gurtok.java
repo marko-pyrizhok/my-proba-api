@@ -16,4 +16,7 @@ public class Gurtok {
     @JoinColumn(name = "vyhovnyk_id")
     private User vyhovnykId;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
