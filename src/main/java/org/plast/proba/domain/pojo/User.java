@@ -15,13 +15,19 @@ public class User {
     private String password;
 
     private String ulad;
-
     @ManyToOne
     @JoinColumn(name = "gurtok_id")
     private Gurtok gurtok;
-
     @ManyToMany
     private Set<Role> roles;
+
+    public Gurtok getGurtok() {
+        return gurtok;
+    }
+
+    public void setGurtok(Gurtok gurtok) {
+        this.gurtok = gurtok;
+    }
 
     public Long getId() {
         return id;

@@ -100,8 +100,7 @@ public class ProbaController {
     }
 
     private List<UserProba> getCurrentUserProbaList() {
-        String loggedInUsername = securityService.findLoggedInUsername();
-        User user = userService.findByUsername(loggedInUsername);
-        return probaService.probaListByUserId(user.getId());
+        return probaService.probaListByUserId(userService.getUser().getId());
     }
+
 }
