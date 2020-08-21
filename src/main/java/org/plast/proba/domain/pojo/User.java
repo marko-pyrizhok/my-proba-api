@@ -18,6 +18,8 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "gurtok_id")
     private Gurtok gurtok;
+
+    private boolean gurtokConfirmed;
     @ManyToMany
     private Set<Role> roles;
 

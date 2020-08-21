@@ -4,6 +4,7 @@ import org.plast.proba.configuration.JwtTokenUtil;
 import org.plast.proba.domain.model.LoginRequest;
 import org.plast.proba.domain.model.LoginResponse;
 import org.plast.proba.domain.model.User;
+import org.plast.proba.repository.RoleRepository;
 import org.plast.proba.service.SecurityService;
 import org.plast.proba.service.UserDetailsServiceImpl;
 import org.plast.proba.service.UserService;
@@ -17,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @Controller
 public class UserController {
     @Autowired
@@ -25,17 +28,19 @@ public class UserController {
     @Autowired
     private SecurityService securityService;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @PostMapping("/registration")
     public String registration(User user) {
 
         org.plast.proba.domain.pojo.User userPojo = new org.plast.proba.domain.pojo.User();
         userPojo.setEmail(user.getUsername());
         userPojo.setPassword(user.getPassword());
-
+        userPojo.setRoles(Set.of(roleRepository.findByName("ROLE_USER")));
         userService.save(userPojo);
 
         securityService.autoLogin(user.getUsername(), user.getPassword());
-
 
         return "";
     }
