@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.plast.proba.domain.pojo.Gurtok;
 import org.plast.proba.domain.pojo.User;
+import org.plast.proba.repository.RoleRepository;
 import org.plast.proba.service.GurtokService;
 import org.plast.proba.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class GurtokController {
 
     @Autowired
     private GurtokService gurtokService;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @ApiImplicitParams(
             @ApiImplicitParam(
@@ -55,6 +59,36 @@ public class GurtokController {
         Gurtok gurtok = gurtokService.getGurtokById(gurtokId);
         user.setGurtok(gurtok);
         userService.save(user);
-        return  "Ask vukhovnyk to confirm" ;
+        return "Ask vuhovnyk to confirm";
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Access Token",
+                    required = true,
+                    allowEmptyValue = false,
+                    paramType = "header",
+                    dataTypeClass = String.class,
+                    example = "Bearer access_token"))
+    @RequestMapping(method = RequestMethod.GET, value = "/confirm-join-to-gurtok")
+    public String confirmJoinToGurtokByUserId(@RequestParam Long userId) {
+        User vyhovnyk = userService.getUser();
+        boolean roleVyhovnyk = vyhovnyk.getRoles().contains("ROLE_VYHOVNYK");
+        User user = userService.getUser(userId);
+        boolean roleUser = user.getRoles().contains("ROLE_USER");
+
+
+        List<User> userList = userService.findByGurtok(vyhovnyk.getGurtok().getId());
+        boolean bothInGurtok = userList.contains(vyhovnyk) && userList.contains(user);
+        if (roleVyhovnyk && roleUser && bothInGurtok) {
+
+            user.setGurtokConfirmed(true);
+            user.getRoles().add(roleRepository.findByName("ROLE_YUNAK"));
+            userService.save(user);
+            return "confirmed";
+        }
+        return "not confirmed";
+
     }
 }

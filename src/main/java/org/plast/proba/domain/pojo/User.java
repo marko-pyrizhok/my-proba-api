@@ -19,6 +19,14 @@ public class User {
     @JoinColumn(name = "gurtok_id")
     private Gurtok gurtok;
 
+    public boolean isGurtokConfirmed() {
+        return gurtokConfirmed;
+    }
+
+    public void setGurtokConfirmed(boolean gurtokConfirmed) {
+        this.gurtokConfirmed = gurtokConfirmed;
+    }
+
     private boolean gurtokConfirmed;
     @ManyToMany
     private Set<Role> roles;
