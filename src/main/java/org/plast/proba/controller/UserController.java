@@ -4,12 +4,16 @@ import org.plast.proba.configuration.JwtTokenUtil;
 import org.plast.proba.domain.model.LoginRequest;
 import org.plast.proba.domain.model.LoginResponse;
 import org.plast.proba.domain.model.User;
+import org.plast.proba.domain.pojo.ConfirmationToken;
+import org.plast.proba.repository.ConfirmationTokenRepository;
 import org.plast.proba.repository.RoleRepository;
+import org.plast.proba.service.EmailSenderService;
 import org.plast.proba.service.SecurityService;
 import org.plast.proba.service.UserDetailsServiceImpl;
 import org.plast.proba.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -18,42 +22,62 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 @Controller
 public class UserController {
     @Autowired
     private UserService userService;
-
     @Autowired
     private SecurityService securityService;
-
+    @Autowired
+    private EmailSenderService emailSenderService;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("/registration")
-    public String registration(User user) {
+    public ResponseEntity<LoginResponse> registration(HttpServletRequest request, User user) {
 
         org.plast.proba.domain.pojo.User userPojo = new org.plast.proba.domain.pojo.User();
-        userPojo.setEmail(user.getUsername());
+        userPojo.setEmail(user.getEmail());
         userPojo.setPassword(user.getPassword());
         userPojo.setRoles(Set.of(roleRepository.findByName("ROLE_USER")));
         userService.save(userPojo);
 
-        securityService.autoLogin(user.getUsername(), user.getPassword());
+        securityService.autoLogin(user.getEmail(), user.getPassword());
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(user.getEmail());
 
-        return "";
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+        ConfirmationToken confirmationToken = new ConfirmationToken(userPojo);
+
+        confirmationTokenRepository.save(confirmationToken);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(userPojo.getEmail());
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setFrom("marko@gmail.com");
+        String currentUrl = request.getRequestURL().toString();
+        int lastIndexOf = currentUrl.lastIndexOf('/');
+        mailMessage.setText("To confirm your account, please click here : "
+                + currentUrl.substring(0,lastIndexOf).concat("/confirm-account?token=")
+                + confirmationToken.getConfirmationToken());
+
+        emailSenderService.sendEmail(mailMessage);
+
+        return ResponseEntity.ok(new LoginResponse(token));
+
     }
-
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(
@@ -79,4 +103,16 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/confirm-account", method = {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<?> confirmUserAccount(@RequestParam("token") String confirmationToken) {
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+
+        if (token != null) {
+            org.plast.proba.domain.pojo.User user = userService.findByUsername(token.getUser().getEmail());
+            user.setEnabled(true);
+            userService.save(user);
+        }
+
+        return ResponseEntity.ok("Confirmed!");
+    }
 }

@@ -3,11 +3,11 @@ package org.plast.proba.domain.pojo;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "pictures")
+@Table(name = "picture")
 public class Picture {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String fileName;
 
@@ -25,11 +25,11 @@ public class Picture {
         this.data = data;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

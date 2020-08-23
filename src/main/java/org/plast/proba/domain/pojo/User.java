@@ -13,11 +13,27 @@ public class User {
     private String email;
 
     private String password;
-
+    @Column(name = "enabled")
+    private boolean enabled;
     private String ulad;
     @ManyToOne
     @JoinColumn(name = "gurtok_id")
     private Gurtok gurtok;
+    private boolean gurtokConfirmed;
+    @ManyToMany
+    private Set<Role> roles;
+
+    public User() {
+        this.enabled=false;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public boolean isGurtokConfirmed() {
         return gurtokConfirmed;
@@ -26,10 +42,6 @@ public class User {
     public void setGurtokConfirmed(boolean gurtokConfirmed) {
         this.gurtokConfirmed = gurtokConfirmed;
     }
-
-    private boolean gurtokConfirmed;
-    @ManyToMany
-    private Set<Role> roles;
 
     public Gurtok getGurtok() {
         return gurtok;
