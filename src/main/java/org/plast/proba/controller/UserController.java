@@ -19,6 +19,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,8 @@ public class UserController {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/registration")
     public ResponseEntity<LoginResponse> registration(HttpServletRequest request, User user) {
@@ -51,13 +54,8 @@ public class UserController {
         userPojo.setEmail(user.getEmail());
         userPojo.setPassword(user.getPassword());
         userPojo.setRoles(Set.of(roleRepository.findByName("ROLE_USER")));
+        userPojo.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userService.save(userPojo);
-
-        securityService.autoLogin(user.getEmail(), user.getPassword());
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(user.getEmail());
-
-        final String token = jwtTokenUtil.generateToken(userDetails);
 
         ConfirmationToken confirmationToken = new ConfirmationToken(userPojo);
 
@@ -75,7 +73,7 @@ public class UserController {
 
         emailSenderService.sendEmail(mailMessage);
 
-        return ResponseEntity.ok(new LoginResponse(token));
+        return ResponseEntity.ok(new LoginResponse("ok"));
 
     }
 
@@ -83,7 +81,7 @@ public class UserController {
     public ResponseEntity<?> createAuthenticationToken(
             @RequestBody LoginRequest authenticationRequest) throws Exception {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        securityService.autoLogin(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());

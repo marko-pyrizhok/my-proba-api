@@ -23,8 +23,30 @@ public class User {
     @ManyToMany
     private Set<Role> roles;
 
+    @OneToOne
+    private Picture mainPhoto;
+
+    @OneToOne
+    private Picture backgroundPhoto;
+
     public User() {
         this.enabled=false;
+    }
+
+    public Picture getMainPhoto() {
+        return mainPhoto;
+    }
+
+    public void setMainPhoto(Picture mainPhoto) {
+        this.mainPhoto = mainPhoto;
+    }
+
+    public Picture getBackgroundPhoto() {
+        return backgroundPhoto;
+    }
+
+    public void setBackgroundPhoto(Picture backgroundPhoto) {
+        this.backgroundPhoto = backgroundPhoto;
     }
 
     public boolean isEnabled() {

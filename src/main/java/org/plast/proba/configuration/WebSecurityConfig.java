@@ -38,8 +38,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtRequestFilter jwtRequestFilter;
 
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+    public void configureGlobal(AuthenticationManagerBuilder authenticationConfigurer) throws Exception {
+        authenticationConfigurer
+                .userDetailsService(jwtUserDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -102,11 +109,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             return matchers.stream().anyMatch(a -> a.matches(request));
         }
 
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
 
