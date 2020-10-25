@@ -17,7 +17,7 @@ public class UserProba {
     private LocalDate dateStart;
     @Column(name = "date_done")
     private LocalDate dateDone;
-    @Column(name = "rank")
+    @Column(name = "stupin")
     private Integer rank;
 
     public UserProba() {

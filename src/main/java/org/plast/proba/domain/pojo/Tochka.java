@@ -7,12 +7,14 @@ import javax.persistence.*;
 public class Tochka {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     private String code;
 
     private String name;
 
+    @Column(name = "stupin")
     private Integer rank;
 
     public Integer getId() {
