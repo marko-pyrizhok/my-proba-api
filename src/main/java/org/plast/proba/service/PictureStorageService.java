@@ -30,7 +30,7 @@ public class PictureStorageService {
         }
     }
 
-    public Picture getFile(String fileId) {
+    public Picture getFile(Long fileId) {
         return pictureRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found with id " + fileId));
     }

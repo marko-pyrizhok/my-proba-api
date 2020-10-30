@@ -78,7 +78,7 @@ public class FileController {
                     dataTypeClass = String.class,
                     example = "Bearer access_token"))
     @GetMapping("/downloadFile/{fileId}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileId) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) {
         Picture dbFile = pictureStorageService.getFile(fileId);
 
         return ResponseEntity.ok()
