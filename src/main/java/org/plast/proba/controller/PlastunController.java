@@ -3,17 +3,17 @@ package org.plast.proba.controller;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiParam;
+import org.plast.proba.domain.model.LoginResponse;
 import org.plast.proba.domain.model.PhotoType;
+import org.plast.proba.domain.model.Plastun;
 import org.plast.proba.domain.model.UploadFileResponse;
 import org.plast.proba.domain.pojo.Picture;
 import org.plast.proba.domain.pojo.User;
 import org.plast.proba.service.PictureStorageService;
 import org.plast.proba.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -63,5 +63,27 @@ public class PlastunController {
 
         return new UploadFileResponse(dbFile.getFileName(), fileDownloadUri,
                 file.getContentType(), file.getSize());
+    }
+
+    @ApiImplicitParams(
+            @ApiImplicitParam(
+                    name = "Authorization",
+                    value = "Access Token",
+                    required = true,
+                    allowEmptyValue = false,
+                    paramType = "header",
+                    dataTypeClass = String.class,
+                    example = "Bearer access_token"))
+    @GetMapping("/current")
+    public ResponseEntity current() {
+        User user = userService.getUser();
+        Plastun plastun = new Plastun();
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/downloadFile/")
+                .path(user.getMainPhoto().getId().toString())
+                .toUriString();
+        plastun.setAvatarImageUrl(fileDownloadUri);
+        return ResponseEntity.ok(plastun);
+
     }
 }
