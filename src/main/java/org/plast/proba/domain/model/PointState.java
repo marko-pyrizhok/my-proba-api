@@ -3,16 +3,26 @@ package org.plast.proba.domain.model;
 import java.time.LocalDate;
 
 public class PointState {
+    private Integer id;
     private String code;
     private String name;
     private Long confirmUserId;
     private LocalDate confirmDate;
 
-    public PointState(String code, String name, Long confirmUserId, LocalDate confirmDate) {
+    public PointState(Integer id, String code, String name, Long confirmUserId, LocalDate confirmDate) {
+        this.id = id;
         this.code = code;
         this.name = name;
         this.confirmUserId = confirmUserId;
         this.confirmDate = confirmDate;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -25,7 +25,8 @@ public class ProbaFactory {
                 .filter(p -> p.getTochka().getId().equals(tochka.getId()))
                 .findAny();
         boolean signed = probaToPoint.isPresent() && probaToPoint.get().getConfirmUser() != null;
-        return new PointState(tochka.getCode(),
+        return new PointState(tochka.getId(),
+                tochka.getCode(),
                 tochka.getName(),
                 signed ? probaToPoint.get().getConfirmUser().getId() : null,
                 signed ? probaToPoint.get().getConfirmDate() : null);
