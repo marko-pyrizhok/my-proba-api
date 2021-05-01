@@ -97,9 +97,7 @@ public class ProbaController {
     @RequestMapping(method = RequestMethod.POST, value = "/my-proba-points")
     public List<PointState> confirmPoint(@RequestBody ConfirmPointRequest confirm) {
         User loggedInUser = userService.getLoggedInUser();
-        if (loggedInUser.getUlad().equals("USP")) {
-            probaService.confirmPoint(confirm, loggedInUser);
-        }
+        probaService.confirmPoint(confirm, loggedInUser);
         return probaService.probaWithPointsById(confirm.getProbaId());
     }
 

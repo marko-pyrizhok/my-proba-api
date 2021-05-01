@@ -52,15 +52,17 @@ public class ProbaServiceImpl implements ProbaService {
 
     @Override
     public void confirmPoint(ConfirmPointRequest confirm, User loggedInUser) {
-        UserProba userProba = probaRepository.getOne(confirm.getProbaId());
-        List<ProbaToTochka> proba = probaToTochkaRepository.findByUserProba(userProba);
-        ProbaToTochka newConfirmPoint = new ProbaToTochka();
-        Tochka tochka = tochkaRepository.getOne((int)confirm.getPointId());
-        newConfirmPoint.setTochka(tochka);
-        newConfirmPoint.setUserProba(userProba);
-        newConfirmPoint.setConfirmUser(loggedInUser);
-        newConfirmPoint.setConfirmDate(confirm.getConfirmDate());
-        probaToTochkaRepository.save(newConfirmPoint);
+        UserProba userProba = probaRepository.findById(confirm.getProbaId()).get();
+        Tochka tochka = tochkaRepository.findById((int) confirm.getPointId()).get();
+        ProbaToTochka probaToTochka = probaToTochkaRepository.findByUserProbaAndTochka(userProba, tochka);
+        if (probaToTochka == null)
+            probaToTochka = new ProbaToTochka();
+
+        probaToTochka.setTochka(tochka);
+        probaToTochka.setUserProba(userProba);
+        probaToTochka.setConfirmUser("USP".equals(loggedInUser.getUlad()) ? loggedInUser : null);
+        probaToTochka.setConfirmDate(confirm.getConfirmDate());
+        probaToTochkaRepository.save(probaToTochka);
     }
 
 }

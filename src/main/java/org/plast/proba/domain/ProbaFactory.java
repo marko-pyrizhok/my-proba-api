@@ -29,6 +29,6 @@ public class ProbaFactory {
                 tochka.getCode(),
                 tochka.getName(),
                 signed ? probaToPoint.get().getConfirmUser().getId() : null,
-                signed ? probaToPoint.get().getConfirmDate() : null);
+                probaToPoint.isEmpty() ? null : probaToPoint.get().getConfirmDate());
     }
 }
