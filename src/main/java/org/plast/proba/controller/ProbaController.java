@@ -81,8 +81,12 @@ public class ProbaController {
                     dataTypeClass = String.class,
                     example = "Bearer access_token"))
     @RequestMapping(method = RequestMethod.GET, value = "/my-proba-points")
-    public List<PointState> getPointListByProbaIdForLoggedInUser(@RequestParam Long probaId) {
-        return probaService.probaWithPointsById(probaId);
+    public ProbaWithPointsResponse getPointListByProbaIdForLoggedInUser(@RequestParam Long probaId) {
+        // todo: ensure, we do have such proba
+        ProbaWithPointsResponse probaWithPointsResponse = new ProbaWithPointsResponse();
+        probaWithPointsResponse.setProbaId(probaId);
+        probaWithPointsResponse.setPointStateList(probaService.probaWithPointsById(probaId));
+        return probaWithPointsResponse;
     }
 
     @ApiImplicitParams(
@@ -95,10 +99,13 @@ public class ProbaController {
                     dataTypeClass = String.class,
                     example = "Bearer access_token"))
     @RequestMapping(method = RequestMethod.POST, value = "/my-proba-points")
-    public List<PointState> confirmPoint(@RequestBody ConfirmPointRequest confirm) {
+    public ProbaWithPointsResponse confirmPoint(@RequestBody ConfirmPointRequest confirm) {
         User loggedInUser = userService.getLoggedInUser();
         probaService.confirmPoint(confirm, loggedInUser);
-        return probaService.probaWithPointsById(confirm.getProbaId());
+        ProbaWithPointsResponse probaWithPointsResponse = new ProbaWithPointsResponse();
+        probaWithPointsResponse.setProbaId(confirm.getProbaId());
+        probaWithPointsResponse.setPointStateList(probaService.probaWithPointsById(confirm.getProbaId()));
+        return probaWithPointsResponse;
     }
 
     private List<UserProba> getCurrentUserProbaList() {
